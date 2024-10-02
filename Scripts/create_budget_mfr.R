@@ -1,6 +1,8 @@
 library(tidyverse)
 library(blingr)
 
+options(scipen = 999)  #remove scientific notation
+
 # Filters -----------------------------------------------------------------------
 OBLIGATION_TYPE_FILTER <- c("OBLG_UNI", "OBLG_SUBOB")
 DISTRIBUTION_FILTER <- c("656-M", "656-GH-M", "656-W", "656-GH-W")
@@ -80,10 +82,9 @@ phoenix_transaction_df <- map(transaction_input_file, ~ blingr::clean_phoenix_tr
 
 
 phoenix_transaction_cumulative_df <- phoenix_transaction_df |> 
-    blingr::create_phoenix_transaction_cumulative()
+    blingr::create_phoenix_transaction_cumulative() |> 
+    mutate(cumulative_transaction_disbursement_fy = round(cumulative_transaction_disbursement_fy, 2))  #round to 2 decimal places
 
-
-#
 
 write_csv(phoenix_transaction_df, paste0(OUTPUT_PATH, "phoenix_transaction.csv"))
 
